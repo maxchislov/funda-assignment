@@ -2,10 +2,10 @@
 const props = defineProps<{
   listing: ListingSummary;
   priority?: boolean;
-}>();
+}>()
 
-const route = useRoute();
-const imageUrl = computed(() => getListingImageUrl(props.listing));
+const route = useRoute()
+const imageUrl = computed(() => getListingImageUrl(props.listing))
 
 // Preserve search context so the detail page can link back to the same results
 const detailLink = computed(() => ({
@@ -14,16 +14,16 @@ const detailLink = computed(() => ({
     q: route.query.q || undefined,
     page: route.query.page || undefined,
   },
-}));
+}))
 
 const stats = computed(() => {
-  const l = props.listing;
+  const l = props.listing
   return [
     { label: "Woonoppervlakte", icon: "heroicons:arrows-pointing-out", text: l.Woonoppervlakte ? formatArea(l.Woonoppervlakte) : undefined },
     { label: "Kamers", icon: "heroicons:home", text: l.AantalKamers ? `${l.AantalKamers} kamers` : undefined },
     { label: "Perceel", icon: "heroicons:map", text: l.Perceeloppervlakte ? `${formatArea(l.Perceeloppervlakte)} perceel` : undefined },
-  ].filter((s): s is typeof s & { text: string } => !!s.text);
-});
+  ].filter((s): s is typeof s & { text: string } => !!s.text)
+})
 </script>
 
 <template>

@@ -2,14 +2,14 @@
 defineProps<{
   currentPage: number;
   totalPages: number;
-}>();
+}>()
 
 const emit = defineEmits<{
   'update:currentPage': [page: number];
-}>();
+}>()
 
 function goTo(page: number) {
-  emit("update:currentPage", page);
+  emit("update:currentPage", page)
 }
 </script>
 

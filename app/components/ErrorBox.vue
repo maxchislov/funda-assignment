@@ -1,14 +1,14 @@
 <script setup lang="ts">
 defineProps<{
   message: string;
-}>();
+}>()
 
 const emit = defineEmits<{
   retry: [];
-}>();
+}>()
 
 // Only show the retry button when the parent actually listens for @retry
-const hasRetry = computed(() => !!getCurrentInstance()?.vnode.props?.onRetry);
+const hasRetry = computed(() => !!getCurrentInstance()?.vnode.props?.onRetry)
 </script>
 
 <template>

@@ -12,7 +12,9 @@
     "test:watch": "vitest --watch",
     "test:coverage": "vitest --coverage",
     "test:unit": "vitest --project unit",
-    "test:nuxt": "vitest --project nuxt"
+    "test:nuxt": "vitest --project nuxt",
+    "lint": "eslint . --max-warnings 0",
+    "lint:fix": "eslint . --fix --max-warnings 0"
   },
   "dependencies": {
     "@nuxt/icon": "^1.15.0",

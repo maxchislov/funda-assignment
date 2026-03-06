@@ -2,7 +2,7 @@
 defineProps<{
   price: number | null | undefined;
   abbreviation?: string | null;
-}>();
+}>()
 </script>
 
 <template>

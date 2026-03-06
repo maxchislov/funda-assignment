@@ -1,20 +1,20 @@
 <script setup lang="ts">
-import type { GalleryPhoto } from "~/utils/listing";
+import type { GalleryPhoto } from "~/utils/listing"
 
 const props = defineProps<{
   photos: GalleryPhoto[];
-}>();
+}>()
 
 const { activeIndex, next, prev, goTo, onKeydown } = useCarousel(
   computed(() => props.photos.length),
-);
-const activePhoto = computed(() => props.photos[activeIndex.value]);
-const hasMultiple = computed(() => props.photos.length > 1);
+)
+const activePhoto = computed(() => props.photos[activeIndex.value])
+const hasMultiple = computed(() => props.photos.length > 1)
 
 const navButtons = [
   { action: prev, side: "left-3", label: "Vorige foto", icon: "heroicons:chevron-left" },
   { action: next, side: "right-3", label: "Volgende foto", icon: "heroicons:chevron-right" },
-] as const;
+] as const
 </script>
 
 <template>

@@ -1,11 +1,20 @@
 import { fileURLToPath } from "node:url";
+import { resolve } from "node:path";
 import { defineConfig } from "vitest/config";
 import { defineVitestProject } from "@nuxt/test-utils/config";
+
+const root = fileURLToPath(new URL(".", import.meta.url));
 
 export default defineConfig({
   test: {
     projects: [
       {
+        resolve: {
+          alias: {
+            "~": resolve(root, "app"),
+            "#shared": resolve(root, "shared"),
+          },
+        },
         test: {
           name: "unit",
           include: ["test/unit/*.{test,spec}.ts"],

@@ -1,12 +1,27 @@
 {
-    "editor.formatOnSave": true,
-    "editor.defaultFormatter": "dbaeumer.vscode-eslint",
-    "editor.codeActionsOnSave": {
-      "source.fixAll.eslint": "always"
-    },
-    "eslint.validate": [
-      "javascript",
-      "typescript",
-      "vue"
-    ]
-  }
+  "editor.formatOnSave": true,
+  "editor.defaultFormatter": "dbaeumer.vscode-eslint",
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": "always"
+  },
+  "[vue]": {
+    "editor.defaultFormatter": "dbaeumer.vscode-eslint"
+  },
+  "[typescript]": {
+    "editor.defaultFormatter": "dbaeumer.vscode-eslint"
+  },
+  "[javascript]": {
+    "editor.defaultFormatter": "dbaeumer.vscode-eslint"
+  },
+  "javascript.format.semicolons": "remove",
+  "typescript.format.semicolons": "remove",
+  "editor.glyphMargin": true,
+  "problems.decorations.enabled": true,
+  "eslint.validate": [
+    "javascript",
+    "typescript",
+    "vue"
+  ],
+  "eslint.run": "onType",
+  "eslint.probe": ["javascript", "javascriptreact", "typescript", "typescriptreact", "vue", "html"]
+}

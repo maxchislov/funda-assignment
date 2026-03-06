@@ -1,9 +1,9 @@
-import { z } from "zod/v4";
+import { z } from "zod/v4"
 
 // Funda API sometimes returns numbers where we expect strings (e.g. Id, Bouwjaar),
 // so we coerce both directions to keep the rest of the app type-safe.
-const coercedString = z.union([z.string(), z.number()]).transform(String);
-const coercedNumber = z.union([z.string(), z.number()]).pipe(z.coerce.number());
+const coercedString = z.union([z.string(), z.number()]).transform(String)
+const coercedNumber = z.union([z.string(), z.number()]).pipe(z.coerce.number())
 
 // Validates the shape we actually use, ignoring extra fields the API may return.
 export const ListingSummarySchema = z.object({
@@ -31,7 +31,7 @@ export const ListingSummarySchema = z.object({
     .nullable(),
   WGS84_X: z.number().nullable(),
   WGS84_Y: z.number().nullable(),
-});
+})
 
 export const ListingsResponseSchema = z.object({
   Objects: z.array(ListingSummarySchema),
@@ -40,18 +40,18 @@ export const ListingsResponseSchema = z.object({
     AantalPaginas: z.number(),
     HuidigePagina: z.number(),
   }),
-});
+})
 
 const MediaItemSchema = z.object({
   Url: z.string(),
   Height: z.number().nullable(),
   Width: z.number().nullable(),
-});
+})
 
 const MediaSchema = z.object({
   MediaItems: z.array(MediaItemSchema),
   Soort: z.number(),
-});
+})
 
 export const ListingDetailSchema = z.object({
   Id: coercedString,
@@ -92,7 +92,7 @@ export const ListingDetailSchema = z.object({
       KoopAbbreviation: z.string().nullable(),
     })
     .nullable(),
-});
+})
 
 // Inferred types keep schemas as the single source of truth, no manual interfaces needed.
 export type ListingSummary = z.infer<typeof ListingSummarySchema>;

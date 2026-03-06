@@ -2,32 +2,32 @@
 // Quick client-side guard, rejects obviously invalid IDs before hitting the API (keeps console clean)
 definePageMeta({
   validate: (route) => {
-    const id = route.params.id;
-    return typeof id === "string" && id.length > 5 && !id.startsWith("_") && !id.includes(".");
+    const id = route.params.id
+    return typeof id === "string" && id.length > 5 && !id.startsWith("_") && !id.includes(".")
   },
-});
+})
 
-const route = useRoute();
-const id = String(route.params.id);
+const route = useRoute()
+const id = String(route.params.id)
 
-const { data: listing, status, error, refresh } = useListingDetail(id);
+const { data: listing, status, error, refresh } = useListingDetail(id)
 
 const backTo = computed(() => {
-  const params = new URLSearchParams();
-  if (route.query.q) params.set("q", String(route.query.q));
-  if (route.query.page) params.set("page", String(route.query.page));
-  const qs = params.toString();
-  return qs ? `/?${qs}` : "/";
-});
+  const params = new URLSearchParams()
+  if (route.query.q) params.set("q", String(route.query.q))
+  if (route.query.page) params.set("page", String(route.query.page))
+  const qs = params.toString()
+  return qs ? `/?${qs}` : "/"
+})
 
-useListingSeo(listing);
+useListingSeo(listing)
 
 // Derived data stays in computed, no extra state, recalculates when listing changes
-const photos = computed(() => extractPhotos(listing.value?.Media ?? null));
-const specs = computed(() => (listing.value ? extractSpecs(listing.value) : []));
+const photos = computed(() => extractPhotos(listing.value?.Media ?? null))
+const specs = computed(() => (listing.value ? extractSpecs(listing.value) : []))
 const hasCoordinates = computed(
   () => listing.value?.WGS84_X != null && listing.value?.WGS84_Y != null,
-);
+)
 </script>
 
 <template>

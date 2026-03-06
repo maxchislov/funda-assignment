@@ -4,20 +4,20 @@ const props = withDefaults(
     initialQuery?: string;
   }>(),
   { initialQuery: "" },
-);
+)
 
 const emit = defineEmits<{
   search: [query: string];
-}>();
+}>()
 
-const searchInput = ref(props.initialQuery);
+const searchInput = ref(props.initialQuery)
 
 watch(() => props.initialQuery, (v) => {
-  searchInput.value = v;
-});
+  searchInput.value = v
+})
 
 function onSubmit() {
-  emit("search", searchInput.value.trim());
+  emit("search", searchInput.value.trim())
 }
 </script>
 

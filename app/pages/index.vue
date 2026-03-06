@@ -4,35 +4,35 @@ useHead({
   meta: [
     { name: "description", content: "Bekijk alle woningen die te koop staan op funda. Zoek in het meest actuele aanbod van huizen, appartementen en nieuwbouw in Nederland." },
   ],
-});
+})
 
-const route = useRoute();
-const router = useRouter();
+const route = useRoute()
+const router = useRouter()
 
 // URL is the single source of truth for search state, keeps results shareable/bookmarkable
 const currentPage = computed({
   get: () => Number(route.query.page) || 1,
   set: (v) => router.push({ query: { ...route.query, page: v > 1 ? v : undefined } }),
-});
+})
 
 const searchLocation = computed({
   get: () => String(route.query.q ?? ""),
   set: (v) => router.push({ query: { ...route.query, q: v || undefined, page: undefined } }),
-});
+})
 
 const { data, status, error, refresh } = useListings({
   page: currentPage,
   location: searchLocation,
-});
+})
 
 function onSearch(query: string) {
-  searchLocation.value = query;
+  searchLocation.value = query
 }
 
 function onPageChange(page: number) {
-  currentPage.value = page;
+  currentPage.value = page
   if (import.meta.client) {
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    window.scrollTo({ top: 0, behavior: "smooth" })
   }
 }
 </script>
@@ -41,6 +41,10 @@ function onPageChange(page: number) {
   <div>
     <SearchBar class="mb-6" :initial-query="searchLocation" @search="onSearch" />
 
+    <!-- 
+      AppShell Architecture: This skeleton loader ensures the UI layout remains completely 
+      stable without Cumulative Layout Shift (CLS) while useFetch resolves the data.
+    -->
     <ListingSkeleton v-if="status === 'pending'" />
 
     <ErrorBox v-else-if="error" message="Er ging iets mis bij het ophalen van woningen." @retry="refresh()">

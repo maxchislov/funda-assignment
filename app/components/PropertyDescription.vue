@@ -1,12 +1,12 @@
 <script setup lang="ts">
 // Funda returns HTML in VolledigeOmschrijving, so we sanitize to prevent XSS.
-import DOMPurify from "isomorphic-dompurify";
+import DOMPurify from "isomorphic-dompurify"
 
 const props = defineProps<{
   html: string;
-}>();
+}>()
 
-const sanitized = computed(() => DOMPurify.sanitize(props.html));
+const sanitized = computed(() => DOMPurify.sanitize(props.html))
 </script>
 
 <template>

@@ -6,7 +6,7 @@ withDefaults(
     title?: string;
   }>(),
   { title: "Makelaar", phone: null },
-);
+)
 </script>
 
 <template>

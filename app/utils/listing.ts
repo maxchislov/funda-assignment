@@ -1,5 +1,5 @@
-import type { ListingDetail, ListingSummary } from "#shared/utils/schemas";
-import { formatArea } from "~/utils/format";
+import type { ListingDetail, ListingSummary } from "#shared/utils/schemas"
+import { formatArea } from "~/utils/format"
 
 export interface GalleryPhoto {
   url: string;
@@ -7,7 +7,7 @@ export interface GalleryPhoto {
 }
 
 // Funda API uses numeric media types; 3 = photo (vs video, floorplan, etc.)
-const MEDIA_TYPE_PHOTO = 3;
+const MEDIA_TYPE_PHOTO = 3
 
 // Pick the best available resolution, API provides multiple sizes
 export function getListingImageUrl(listing: ListingSummary): string {
@@ -17,20 +17,20 @@ export function getListingImageUrl(listing: ListingSummary): string {
     listing.FotoMedium ||
     listing.Foto ||
     ""
-  );
+  )
 }
 
 export function extractPhotos(media: ListingDetail["Media"]): GalleryPhoto[] {
-  if (!media) return [];
+  if (!media) return []
   return media
     .filter((m) => m.Soort === MEDIA_TYPE_PHOTO)
     .map((m) => {
       // Each media entry has multiple resolutions, grab the widest one
       const largest = m.MediaItems.reduce((a, b) =>
         (b.Width ?? 0) > (a.Width ?? 0) ? b : a,
-      );
-      return { url: largest.Url };
-    });
+      )
+      return { url: largest.Url }
+    })
 }
 
 interface SpecEntry {
@@ -71,8 +71,8 @@ export function extractSpecs(
     { label: "Garage", value: listing.Garage },
     { label: "Ligging", value: listing.Ligging },
     { label: "Energielabel", value: listing.Energielabel?.Label },
-  ];
+  ]
   return raw.filter(
     (d): d is { label: string; value: string | number } => d.value != null,
-  );
+  )
 }
