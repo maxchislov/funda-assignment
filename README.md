@@ -1,59 +1,125 @@
-# Funda - Property Listings
+# Funda — Property Listings
 
 A Nuxt 3 application for browsing Funda real-estate listings, built as a frontend engineering assignment.
 
+---
+
 ## Research & Strategy
 
-Before writing the first line of code, I researched the [Funda Engineering Blog](https://blog.funda.nl/) to understand the team's recent migration to Nuxt 3. My goal was to align this project with Funda's architectural values:
+Before writing the first line of code, I spent time going through the [Funda Engineering Blog](https://blog.funda.nl/) to get a feel for the team's engineering culture. The idea was to align this project with Funda's documented vision and technical values, while layering in my own architectural assumptions where the assignment left room for interpretation.
 
-- **Consistency**: Adopting the "Appshell" pattern for a seamless SSR-to-Client transition.
-- **Performance-First**: Recognizing that real estate search is a high-traffic domain where LCP (Largest Contentful Paint) and CLS (Cumulative Layout Shift) directly impact SEO and user retention.
-- **Pragmatism**: I chose a "Simple over Complex" design philosophy. I avoided over-engineering (e.g., massive state management stores like Pinia) where native Nuxt 3 features like `useState` or URL params were more than sufficient for the scope.
+### Funda's Vision & Values (derived from their Engineering Blog)
+
+- **Modernization for Scalability** — There's a clear organizational push toward modern frameworks (Nuxt 3) and decoupled architectures to improve development agility.
+- **Lighthouse Architecture** — Funda's internal framework for organizing teams around independent, decoupled bounded contexts. Teams own their features end-to-end, communicate via event-driven contracts, and can adopt new technologies without blocking others. The philosophy is about the journey, not a fixed destination — enabling fast iteration while decomposing legacy monoliths into cloud-native microservices.
+- **Robust Reliability** — A strong emphasis on non-functional testing, resilience, and handling edge cases gracefully.
+
+### My Assumptions & Guiding Principles
+
+- **Consistency** — Adopting the "Appshell" pattern for a seamless SSR-to-Client transition, in line with how Funda structures their own pages.
+- **Performance-First** — Real estate search is a high-traffic domain. LCP and CLS directly impact SEO rankings and user retention, so I optimized for those from day one.
+- **Pragmatism** — I went with a "simple over complex" philosophy. I deliberately avoided pulling in heavy state management (e.g. Pinia) where native Nuxt 3 features like `useState` or plain URL params were more than enough for the scope of this assignment.
 
 ---
 
 ## Architecture Decisions
 
-- **Single Responsibility & DRY**: Logic for data transformation (API -> UI) is strictly isolated in `utils/listing.ts` and parsing schemas in `shared/utils/schemas.ts`. On the presentation side, UI is broken down into small, highly reusable components (`PropertyCard`, `SearchBar`, `PaginationBar`). This keeps components "dumb" and focused solely on presentation, while making the business logic 100% unit-testable.
-- **Testing Architecture**: Guided by the Funda Engineering blog post on Nuxt 3 testing struggles, the test suite is fundamentally split into multiple projects in `vitest.config.ts`. Standard business logic runs instantly in raw Node, while component tests utilize `@nuxt/test-utils` (`environment: 'nuxt'`) to perfectly mock auto-imports and the Nuxt context.
-- **Security & API Proxying**: By using a server-side proxy route (`server/api/listings.get.ts`), the API key remains a private environment variable on the server. This prevents "Key Leaks" to the client, and allows the native Nitro caching layer to act as a shield to prevent catastrophic Rate-Limit bans from the Funda Partner API.
-- **URL as the Source of Truth**: The search query and pagination state are bound directly to the URL (`?q=`, `?page=`). This ensures listings are natively shareable, bookmarkable, and provides a perfectly sensible "Back" button experience when returning from a detail page.
-- **SSR-First vs Client-Only Boundaries**: Pages utilize `useFetch` to render listings on the server for immediate SEO availability and fast First Paint. However, heavy client-bound libraries (like Leaflet Maps) are intentionally segregated into `.client.vue` components to completely avoid SSR hydration mismatches.
+These are the key architectural choices I made, balancing developer experience with tangible business impact.
+
+### URL as the Source of Truth
+
+**Implementation:** The search query and pagination state live directly in the URL (`?q=`, `?page=`).
+
+- **DevEx:** No need for a global state management library — the URL handles it.
+- **Business Impact:** Listings are natively shareable and bookmarkable. The "Back" button just works, which reduces user friction and bounce rates.
+
+### SSR-First with Client-Only Boundaries
+
+**Implementation:** Pages use `useFetch` to render listings on the server. Heavy client-side libraries (like Leaflet for maps) are isolated into `.client.vue` components.
+
+- **DevEx:** Completely avoids SSR hydration mismatches and `window is not defined` errors.
+- **Business Impact:** Critical content is SEO-available and paints fast. Interactive widgets load after without blocking the initial render.
+
+### Security & API Proxying
+
+**Implementation:** All external API calls go through a server-side proxy (`server/api/listings.get.ts`).
+
+- **DevEx:** Centralizes data-fetching logic and gives us a single integration point for caching.
+- **Business Impact:** Keeps the API key out of the client bundle (no leaks), and the Nitro caching layer acts as a buffer against Rate-Limit bans from the Partner API.
+
+### Single Responsibility & DRY
+
+**Implementation:** Data transformation logic lives in `utils/listing.ts`, parsing schemas in `shared/utils/schemas.ts`. The UI is built from small, focused components (`PropertyCard`, `SearchBar`) that only handle presentation.
+
+- **DevEx:** Business logic is 100% unit-testable without touching the DOM. Components stay reusable and easy to reason about.
+- **Business Impact:** When the API structure changes, the blast radius is contained — you fix the transformer, not every template.
 
 ---
 
-## Quality Gates & Performance
+## Quality Gates
 
-> ![Lighthouse 100/100](lighthouse-screenshot.png) *(Score achieved on the Vercel production deployment, where Nitro caching and IPX optimizations are active.)*
+To keep things stable and accessible, I set up three main quality boundaries:
 
-I implemented multiple layers of defense to ensure a production-ready application that scores exceptionally well on Lighthouse audits (100 Performance, 100 SEO/Best Practices):
+### Automated Testing Suite
 
-- **A11y (Accessibility) by Default**: The UI is optimized for screen readers. Structural elements have comprehensive `aria-labels`, decorative icons are explicitly hidden (`aria-hidden="true"`), and dynamic transitions like pagination utilize `aria-live="polite"` regions so visual changes are announced natively.
-- **Zod Validation (Schema Guards)**: Zod acts as a strict boundary between the Funda API and the frontend. If the API ever changes shape or sends unexpected nulls, the backend proxy catches it, gracefully failing or coercing types rather than crashing the client's browser.
-- **Image Optimization (LCP Fixes)**: Real estate sites are heavy on highly-detailed imagery. I adopted `@nuxt/image` tied to the `ipx` provider to natively convert large Funda JPEGs into highly compressed WebP/AVIF formats on the fly.
-- **Responsive Densities (CLS Fixes)**: I applied explicit `sizes` and `densities` constraints (e.g. `sizes="xs:100vw sm:50vw lg:400px"`) to the `<NuxtImg>` components. This prevents the browser from uselessly downloading massive retina-scaled 1080px images for tiny mobile screens, drastically cutting payload size and eliminating layout shifts.
+Guided by Funda's own blog post on Nuxt 3 testing pain points, the suite is split into separate projects in `vitest.config.ts`:
+
+- **Unit Tests** — Fast, pure Node tests for business logic and data transformers.
+- **Component Tests** — Uses `@nuxt/test-utils` with `environment: 'nuxt'` to verify UI behavior with proper auto-import mocking.
+- **Coverage Reporting** — Test coverage tooling is already wired in, so enforcing minimum coverage thresholds in CI/CD is just a config flag away.
+
+### Zod Validation (Schema Guards)
+
+Zod sits as a strict contract between the Funda API and the frontend. Data gets validated and coerced at the server-proxy level, so if the API ever changes shape or sends unexpected nulls, the app fails gracefully instead of crashing with "undefined" errors in the user's browser.
+
+### Accessibility (a11y) by Default
+
+The UI is built with screen readers in mind. Structural elements carry proper `aria-labels`, decorative icons are hidden via `aria-hidden="true"`, and dynamic content changes (like pagination updates) use `aria-live="polite"` regions so assistive tech picks them up automatically.
+
+---
+
+## Performance Metrics
+
+> ![Lighthouse 100/100](lighthouse-screenshot.png)
+> *Score achieved on the Vercel production deployment, with Nitro caching and IPX optimizations active.*
+
+The app was built to hit strict Core Web Vitals targets — it scores **100/100** on Lighthouse for Performance, Accessibility, SEO, and Best Practices.
+
+### Image Optimization (LCP)
+
+Real estate sites are image-heavy by nature. I used `@nuxt/image` with the `ipx` provider to convert large Funda JPEGs into compressed WebP/AVIF on the fly, which brought LCP well within budget.
+
+### Responsive Densities (CLS)
+
+Explicit `sizes` and `densities` constraints (e.g. `sizes="xs:100vw sm:50vw lg:400px"`) on `<NuxtImg>` components prevent the browser from downloading oversized retina images on small screens. This cuts payload and eliminates layout shifts.
 
 ---
 
 ## Final Thoughts & Next Steps
 
-This project represents my core approach to frontend engineering: **Build it reliable, make it fast, and keep it maintainable.** 
+This project reflects how I like to approach frontend work: **build it reliable, make it fast, keep it maintainable.**
 
-If I had more time to continue iterating on this assignment, my next areas of focus would be:
+If I had more time to keep iterating, here's where I'd focus next:
 
-1. **Expanding the Automated Testing Suite**: While the foundation is set via `vitest.config.ts`, I would expand the suite to rigorously validate edge-cases in the Zod schemas and data transformers, alongside deeper component integration tests utilizing `@nuxt/test-utils` and `happy-dom`.
-2. **Edge Caching**: Expanding upon the current Nitro in-memory cache by implementing proper `Cache-Control: s-maxage` (Stale-While-Revalidate) headers, allowing Vercel/Cloudflare Edge nodes to statically host API responses globally, further reducing Time-to-First-Byte (TTFB).
-3. **GEO (Generative Engine Optimization) — JSON-LD structured data**: My next step for GEO would be to add **Schema.org JSON-LD** on the property detail page so that each listing is not just “text and images” but a machine-readable **RealEstateListing**. Concretely: inject a `<script type="application/ld+json">` via Nuxt’s `useHead` (or `useJsonld` when available), with `@type: "RealEstateListing"`, `address` (PostalAddress), `price`/`priceCurrency`, `numberOfRooms`, and `floorSize` (QuantitativeValue, unitCode MTK). **Why this matters for Funda in 2026**: Search engines and LLMs increasingly use structured data to understand, summarize, and cite sources. With proper JSON-LD, Funda’s listings can be reliably parsed and referenced in AI-generated answers (e.g. “Houses in Amsterdam under €500k”), in rich results, and in voice/search assistants—improving visibility and trust in a GEO-heavy landscape.
+1. **Expanding the Test Suite** — The foundation is there via `vitest.config.ts`. Next would be thorough edge-case coverage for Zod schemas and deeper component integration tests with `@nuxt/test-utils` and `happy-dom`.
+2. **Product & UX Polish** — Work with UX/Design to improve information hierarchy. On the detail page: break up long `VolledigeOmschrijving` blocks into expandable sections, parse them into scannable groups with clear headers (e.g. "Begane grond", "Eerste verdieping"), and reorder property specs more logically. Low-hanging fruit for a more polished feel.
+3. **Advanced Search & Filtering** — The URL-state architecture (`?q=amsterdam`) is proven. Next step: multi-faceted filtering (price, property type, rooms, sorting). For a premium search experience, integrating **Algolia** or **Typesense** for instant typo-tolerant suggestions would be worth exploring.
+4. **Edge Caching** — Move beyond Nitro's in-memory cache by adding proper `Cache-Control: s-maxage` (Stale-While-Revalidate) headers, so Vercel/Cloudflare edge nodes can serve API responses globally and cut TTFB further.
+5. **JSON-LD Structured Data (GEO)** — Add Schema.org JSON-LD on the detail page to make each listing a machine-readable `RealEstateListing`. Inject via `useHead` with `address`, `price`, `numberOfRooms`, `floorSize`, etc. In 2026, search engines and LLMs increasingly rely on structured data to surface and cite results — this is how Funda's listings show up in AI answers like "houses in Amsterdam under €500k."
+6. **Map View Toggle** — A "Show on map" toggle on the results page, plotting all listings on a single Leaflet map. Matches how a lot of people actually search for homes.
+7. **Branding** — Swap the text logo for a proper Funda SVG. Small change, big visual upgrade.
+8. **Favorites / Saved Listings** — Heart icon on property cards, persisted via `localStorage` or account-backed. Simple feature that improves retention.
+9. **Detail Page Engagement** — Energy label as a color-coded badge, a "Direct contact" form next to the phone number, a quick mortgage calculator, and a "Similar properties" section at the bottom to keep users browsing.
 
 ---
 
 ## Getting Started
 
 ### Tech Stack
-- **Nuxt 3** - SSR-first framework for Vue
-- **Tailwind CSS** - Utility-first styling with Funda branding
-- **Zod** - Runtime validation of API responses
-- **Leaflet** - Lightweight maps (client-side only)
+- **Nuxt 3** — SSR-first framework for Vue
+- **Tailwind CSS** — Utility-first styling with Funda branding
+- **Zod** — Runtime validation of API responses
+- **Leaflet** — Lightweight maps (client-side only)
 
 ```bash
 # Install dependencies
@@ -68,4 +134,5 @@ npm run dev
 # Or build for production preview
 npm run build && npm run preview
 ```
+
 The app runs at `http://localhost:3000`.
