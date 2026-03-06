@@ -36,7 +36,7 @@ const hasCoordinates = computed(
       :to="backTo"
       class="mb-4 inline-flex items-center gap-1 text-sm text-gray-500 transition-colors hover:text-funda-blue"
     >
-      <Icon name="heroicons:chevron-left" class="h-4 w-4" />
+      <Icon name="heroicons:chevron-left" class="h-4 w-4" aria-hidden="true" />
       Terug naar resultaten
     </NuxtLink>
 

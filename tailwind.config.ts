@@ -5,7 +5,7 @@ export default <Partial<Config>>{
     extend: {
       colors: {
         "funda-blue": "#0071b3",
-        "funda-orange": "#ff9b21",
+        "funda-orange": "#c25400",
       },
     },
     aspectRatio: {

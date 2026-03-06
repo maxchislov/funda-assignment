@@ -32,7 +32,7 @@ function onSubmit() {
     >
     <button
       type="submit"
-      class="rounded-lg bg-funda-orange px-6 py-4 text-md font-semibold text-white transition-colors hover:bg-orange-500"
+      class="rounded-lg bg-funda-orange px-6 py-4 text-base font-semibold text-white transition-colors hover:bg-orange-500"
     >
       Zoeken
     </button>

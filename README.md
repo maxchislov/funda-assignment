@@ -28,6 +28,7 @@ Before writing the first line of code, I researched the [Funda Engineering Blog]
 
 I implemented multiple layers of defense to ensure a production-ready application that scores exceptionally well on Lighthouse audits (100 Performance, 100 SEO/Best Practices):
 
+- **A11y (Accessibility) by Default**: The UI is optimized for screen readers. Structural elements have comprehensive `aria-labels`, decorative icons are explicitly hidden (`aria-hidden="true"`), and dynamic transitions like pagination utilize `aria-live="polite"` regions so visual changes are announced natively.
 - **Zod Validation (Schema Guards)**: Zod acts as a strict boundary between the Funda API and the frontend. If the API ever changes shape or sends unexpected nulls, the backend proxy catches it, gracefully failing or coercing types rather than crashing the client's browser.
 - **Image Optimization (LCP Fixes)**: Real estate sites are heavy on highly-detailed imagery. I adopted `@nuxt/image` tied to the `ipx` provider to natively convert large Funda JPEGs into highly compressed WebP/AVIF formats on the fly.
 - **Responsive Densities (CLS Fixes)**: I applied explicit `sizes` and `densities` constraints (e.g. `sizes="xs:100vw sm:50vw lg:400px"`) to the `<NuxtImg>` components. This prevents the browser from uselessly downloading massive retina-scaled 1080px images for tiny mobile screens, drastically cutting payload size and eliminating layout shifts.
@@ -41,8 +42,8 @@ This project represents my core approach to frontend engineering: **Build it rel
 If I had more time to continue iterating on this assignment, my next areas of focus would be:
 
 1. **Expanding the Automated Testing Suite**: While the foundation is set via `vitest.config.ts`, I would expand the suite to rigorously validate edge-cases in the Zod schemas and data transformers, alongside deeper component integration tests utilizing `@nuxt/test-utils` and `happy-dom`.
-2. **Accessibility (a11y) Polish**: Adding comprehensive ARIA labels to the search filters, ensuring screen-reader announcements when pagination changes, and verifying 100% keyboard navigability for the Leaflet map overlay.
-3. **Edge Caching**: Expanding upon the current Nitro in-memory cache by implementing proper `Cache-Control: s-maxage` (Stale-While-Revalidate) headers, allowing Vercel/Cloudflare Edge nodes to statically host API responses globally, further reducing Time-to-First-Byte (TTFB).
+2. **Edge Caching**: Expanding upon the current Nitro in-memory cache by implementing proper `Cache-Control: s-maxage` (Stale-While-Revalidate) headers, allowing Vercel/Cloudflare Edge nodes to statically host API responses globally, further reducing Time-to-First-Byte (TTFB).
+3. **GEO (Generative Engine Optimization) — JSON-LD structured data**: My next step for GEO would be to add **Schema.org JSON-LD** on the property detail page so that each listing is not just “text and images” but a machine-readable **RealEstateListing**. Concretely: inject a `<script type="application/ld+json">` via Nuxt’s `useHead` (or `useJsonld` when available), with `@type: "RealEstateListing"`, `address` (PostalAddress), `price`/`priceCurrency`, `numberOfRooms`, and `floorSize` (QuantitativeValue, unitCode MTK). **Why this matters for Funda in 2026**: Search engines and LLMs increasingly use structured data to understand, summarize, and cite sources. With proper JSON-LD, Funda’s listings can be reliably parsed and referenced in AI-generated answers (e.g. “Houses in Amsterdam under €500k”), in rich results, and in voice/search assistants—improving visibility and trust in a GEO-heavy landscape.
 
 ---
 

@@ -10,7 +10,7 @@
   <div class="flex min-h-screen flex-col bg-gray-50">
     <header class="sticky top-0 z-40 border-b border-gray-200 bg-white shadow-sm">
       <nav class="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6">
-        <NuxtLink to="/" class="flex items-center gap-2 text-3xl font-bold text-funda-orange">
+        <NuxtLink to="/" aria-label="Funda Home" class="flex items-center gap-2 text-3xl font-bold text-funda-orange">
           funda
         </NuxtLink>
       </nav>

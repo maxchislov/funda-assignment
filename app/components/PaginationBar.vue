@@ -22,18 +22,20 @@ function goTo(page: number) {
     <button
       :disabled="currentPage <= 1"
       class="rounded-lg border px-3 py-2 text-sm transition-colors disabled:cursor-not-allowed disabled:opacity-40"
+      aria-label="Ga naar de vorige pagina"
       @click="goTo(currentPage - 1)"
     >
       Vorige
     </button>
 
-    <span class="px-3 py-2 text-sm text-gray-600">
-      {{ currentPage }} / {{ totalPages }}
+    <span class="px-3 py-2 text-sm text-gray-600" aria-live="polite">
+      Pagina {{ currentPage }} van {{ totalPages }}
     </span>
 
     <button
       :disabled="currentPage >= totalPages"
       class="rounded-lg border px-3 py-2 text-sm transition-colors disabled:cursor-not-allowed disabled:opacity-40"
+      aria-label="Ga naar de volgende pagina"
       @click="goTo(currentPage + 1)"
     >
       Volgende

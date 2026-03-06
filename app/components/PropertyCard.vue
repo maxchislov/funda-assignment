@@ -29,9 +29,10 @@ const stats = computed(() => {
 <template>
   <NuxtLink
     :to="detailLink"
+    :aria-label="`Bekijk woning aan de ${listing.Adres} in ${listing.Woonplaats}`"
     class="group block overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm transition-shadow hover:shadow-md"
   >
-    <div class="relative aspect-property w-full overflow-hidden bg-gray-100">
+    <div class="relative aspect-property w-full overflow-hidden bg-gray-100" aria-hidden="true">
       <NuxtImg
         v-if="imageUrl"
         :src="imageUrl"
@@ -66,7 +67,8 @@ const stats = computed(() => {
 
       <div v-if="stats.length" class="mt-3 flex flex-wrap gap-3 text-sm text-gray-600">
         <span v-for="stat in stats" :key="stat.label" class="flex items-center gap-1">
-          <Icon :name="stat.icon" class="h-4 w-4" />
+          <Icon :name="stat.icon" class="h-4 w-4" aria-hidden="true" />
+          <span class="sr-only">{{ stat.label }}: </span>
           {{ stat.text }}
         </span>
       </div>
