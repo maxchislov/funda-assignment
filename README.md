@@ -7,7 +7,6 @@ A Nuxt 3 application for browsing Funda real-estate listings, built as a fronten
 - **Nuxt 3** — SSR-first framework for Vue
 - **Tailwind CSS** — Utility-first styling with Funda branding
 - **Zod** — Runtime validation of API responses
-- **Radix Vue** — Accessible headless UI primitives
 - **Vitest** — Unit and component testing with `@nuxt/test-utils`
 - **Leaflet** — Lightweight maps (client-side only)
 

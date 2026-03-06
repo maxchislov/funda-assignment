@@ -5,8 +5,11 @@ export default <Partial<Config>>{
     extend: {
       colors: {
         "funda-blue": "#0071b3",
-        "funda-orange": "#f7a100",
+        "funda-orange": "#ff9b21",
       },
+    },
+    aspectRatio: {
+      property: "16 / 10",
     },
   },
 };
