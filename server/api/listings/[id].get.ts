@@ -1,5 +1,7 @@
 import { ListingDetailSchema } from "#shared/utils/schemas"
 
+const FUNDA_API_DETAIL_PATH = "https://partnerapi.funda.nl/feeds/Aanbod.svc/json/detail"
+
 export default defineCachedEventHandler(
   async (event) => {
     const config = useRuntimeConfig()
@@ -13,7 +15,7 @@ export default defineCachedEventHandler(
       })
     }
 
-    const url = `https://partnerapi.funda.nl/feeds/Aanbod.svc/json/detail/${config.fundaApiKey}/koop/${id}/`
+    const url = `${FUNDA_API_DETAIL_PATH}/${config.fundaApiKey}/koop/${id}/`
 
     const data = await $fetch(url)
     return ListingDetailSchema.parse(data)

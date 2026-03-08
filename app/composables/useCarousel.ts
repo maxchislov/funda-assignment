@@ -3,12 +3,15 @@ export function useCarousel(length: MaybeRef<number>) {
   const activeIndex = ref(0)
 
   function next() {
-    activeIndex.value = (activeIndex.value + 1) % toValue(length)
+    const len = toValue(length)
+    if (len <= 0) return
+    activeIndex.value = (activeIndex.value + 1) % len
   }
 
   function prev() {
-    activeIndex.value =
-      (activeIndex.value - 1 + toValue(length)) % toValue(length)
+    const len = toValue(length)
+    if (len <= 0) return
+    activeIndex.value = (activeIndex.value - 1 + len) % len
   }
 
   function onKeydown(e: KeyboardEvent) {
@@ -22,7 +25,9 @@ export function useCarousel(length: MaybeRef<number>) {
   }
 
   function goTo(index: number) {
-    activeIndex.value = index
+    const len = toValue(length)
+    const clamped = Math.max(0, Math.min(index, len - 1))
+    activeIndex.value = len > 0 ? clamped : 0
   }
 
   return { activeIndex: readonly(activeIndex), next, prev, goTo, onKeydown }

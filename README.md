@@ -21,7 +21,7 @@ Key technical highlights:
 - Nitro in-memory caching buffers against Partner API rate limits
 - Appshell pattern for a seamless SSR-to-client transition
 - Skeleton loading and fallback error pages for perceived performance and resilience
-- "Simple over complex" philosophy: `useState` and URL params over a full state management library
+- "Simple over complex" philosophy: URL query params (`?q=`, `?page=`) as the single source of truth + Vue's native `ref`/`computed` for local state — no state management library needed
 
 **Lighthouse 100/100** on Performance, Accessibility, SEO, and Best Practices on the Vercel production deployment.
 
@@ -78,6 +78,7 @@ Guided by Funda's own blog post on Nuxt 3 testing pain points, the suite is spli
 - **Unit Tests**: Fast, pure Node tests for business logic and data transformers.
 - **Component Tests**: Uses `@nuxt/test-utils` with `environment: 'nuxt'` to verify UI behavior with proper auto-import mocking.
 - **Coverage Reporting**: Test coverage tooling is already wired in, so enforcing minimum coverage thresholds in CI/CD is just a config flag away.
+- **Pre-commit hook**: [Husky](https://typicode.github.io/husky/) runs the full test suite (`npm run test:run`, unit + Nuxt projects) before each commit so broken code doesn’t get committed.
 
 ### Zod Validation (Schema Guards)
 

@@ -1,5 +1,7 @@
 import { ListingsResponseSchema } from "#shared/utils/schemas"
 
+const FUNDA_API_LIST_PATH = "https://partnerapi.funda.nl/feeds/Aanbod.svc/json"
+
 // Server-side proxy: keeps the API key out of the client bundle
 // and lets us validate + cache responses before they reach the browser.
 export default defineCachedEventHandler(
@@ -11,7 +13,7 @@ export default defineCachedEventHandler(
     const pageSize = Number(query.pagesize) || 25
     const location = (query.zo as string) || ""
 
-    const baseUrl = `https://partnerapi.funda.nl/feeds/Aanbod.svc/json/${config.fundaApiKey}/`
+    const baseUrl = `${FUNDA_API_LIST_PATH}/${config.fundaApiKey}/`
     const params = new URLSearchParams({
       type: "koop",
       page: String(page),

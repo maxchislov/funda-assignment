@@ -1,6 +1,14 @@
 <script setup lang="ts">
 import type { GalleryPhoto } from "~/utils/listing"
 
+// Main image dimensions (16:10, matches aspect-property); sizes hints for responsive srcset
+const GALLERY_IMAGE_WIDTH = 922
+const GALLERY_IMAGE_HEIGHT = 576
+
+// Thumbnail strip: display size w-24 (96px) / sm:w-28 (112px); dimensions for aspect + srcset
+const THUMBNAIL_IMAGE_WIDTH = 121
+const THUMBNAIL_IMAGE_HEIGHT = 80
+
 const props = defineProps<{
   photos: GalleryPhoto[];
 }>()
@@ -34,8 +42,8 @@ const navButtons = [
         :src="activePhoto.url"
         :alt="activePhoto.alt || 'Foto'"
         class="aspect-property w-full object-cover"
-        width="922"
-        height="576"
+        :width="GALLERY_IMAGE_WIDTH"
+        :height="GALLERY_IMAGE_HEIGHT"
       />
 
       <button
@@ -81,8 +89,8 @@ const navButtons = [
           class="h-16 w-24 rounded border-2 object-cover transition-all sm:h-20 sm:w-28"
           :class="i === activeIndex ? 'border-funda-orange' : 'border-transparent opacity-60 hover:opacity-100'"
           loading="lazy"
-          width="121"
-          height="80"
+          :width="THUMBNAIL_IMAGE_WIDTH"
+          :height="THUMBNAIL_IMAGE_HEIGHT"
         />
       </button>
     </div>
